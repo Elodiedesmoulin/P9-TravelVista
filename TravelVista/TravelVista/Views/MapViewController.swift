@@ -11,11 +11,17 @@ import MapKit
 class MapViewController: UIViewController, MKMapViewDelegate {
     var coordinates: CLLocationCoordinate2D? = nil
     var capitalName: String? = nil
+    var country: Country?
     
     @IBOutlet weak var mapView: MKMapView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let country = country {
+                // par exemple :
+                print("Pays reçu : \(country.name)")
+                // centrer la carte sur la capitale ici
+            }
         
         if let coordinates = self.coordinates,
            let capitalName = self.capitalName {

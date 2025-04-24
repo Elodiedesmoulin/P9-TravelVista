@@ -8,36 +8,42 @@
 import SwiftUI
 
 struct TitleView: View {
-    let countryName: String
-    let capital: String
-    let rating: Int
+    let country: Country
 
     var body: some View {
-        HStack(alignment: .top) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(countryName)
-                    .font(.title2)
+        HStack {
+            VStack(alignment: .leading) {
+                Text(country.name)
+                    .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundColor(.blue)
 
-                Text(capital)
+                Text(country.capital)
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.gray)
             }
 
             Spacer()
 
-            HStack(spacing: 2) {
-                ForEach(0..<5) { index in
-                    Image(systemName: index < rating ? "star.fill" : "star")
+            HStack(spacing: 4) {
+                ForEach(0..<country.rate, id: \.self) { _ in
+                    Image(systemName: "star.fill")
                         .foregroundColor(.orange)
                 }
             }
         }
-        .padding(.horizontal)
+        .padding()
+        .background(Color.white.opacity(0.85))
     }
 }
 
 #Preview {
-    TitleView(countryName: "Norvège", capital: "Oslo", rating: 4)
+    TitleView(country: Country(
+        name: "Vietnam",
+        capital: "Hanoi",
+        description: "Lorem ipsum",
+        rate: 4,
+        pictureName: "vietnam",
+        coordinates: Coordinates(latitude: 21.0285, longitude: 105.8542)
+    ))
 }

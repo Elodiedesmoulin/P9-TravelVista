@@ -5,21 +5,18 @@
 //  Created by Elo on 23/04/2025.
 //
 
-
 import SwiftUI
 
 struct ListView: View {
-    let countriesByContinent: [String: [Country]]
+    @ObservedObject var viewModel: CountryListViewModel
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(countriesByContinent.keys.sorted(), id: \.self) { continent in
-                    Section(header: Text(continent).font(.headline)) {
-                        ForEach(countriesByContinent[continent] ?? [], id: \.name) { country in
-                            NavigationLink {
-                                Text("Detail for \(country.name)")
-                            } label: {
+                ForEach(viewModel.countriesByContinent.keys.sorted(), id: \.self) { continent in
+                    Section(header: Text(continent)) {
+                        ForEach(viewModel.countriesByContinent[continent] ?? [], id: \.name) { country in
+                            NavigationLink(destination: DetailView(country: country)) {
                                 HStack {
                                     Image(country.pictureName)
                                         .resizable()
@@ -32,15 +29,13 @@ struct ListView: View {
                                             .foregroundColor(.blue)
                                         Text(country.capital)
                                             .font(.subheadline)
-                                            .foregroundColor(.secondary)
+                                            .foregroundColor(.gray)
                                     }
 
                                     Spacer()
 
                                     HStack(spacing: 4) {
                                         Text("\(country.rate)")
-                                            .foregroundColor(.black)
-                                            .font(.subheadline)
                                         Image(systemName: "star.fill")
                                             .foregroundColor(.orange)
                                     }
@@ -57,11 +52,6 @@ struct ListView: View {
 }
 
 #Preview {
-    let exampleData: [String: [Country]] = [
-        "Europe": [
-            Country(name: "Norvège", capital: "Oslo", description: "Blabla", rate: 4, pictureName: "norvege", coordinates: Coordinates(latitude: 0, longitude: 0)),
-            Country(name: "Italie", capital: "Rome", description: "Blabla", rate: 3, pictureName: "italie", coordinates: Coordinates(latitude: 0, longitude: 0))
-        ]
-    ]
-    ListView(countriesByContinent: exampleData)
+    let viewModel = CountryListViewModel()
+    return ListView(viewModel: viewModel)
 }

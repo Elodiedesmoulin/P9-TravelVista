@@ -16,8 +16,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate {
     @IBOutlet weak var mapButton: UIButton!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var embedMapView: UIView!
-    @IBOutlet weak var titleView: UIView!
-
+    
     var country: Country?
     
     override func viewDidLoad() {
@@ -27,7 +26,7 @@ class DetailViewController: UIViewController, MKMapViewDelegate {
         guard let country = country else {
             fatalError("no Country received in DetailViewController")
         }
-
+        
         setUpData(country: country)
         
         self.title = country.name

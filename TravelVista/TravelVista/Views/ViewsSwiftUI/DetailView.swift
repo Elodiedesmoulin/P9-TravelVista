@@ -11,22 +11,18 @@ import SwiftUI
 struct DetailView: UIViewControllerRepresentable {
     let country: Country
 
-    // 👇 Note bien le retour : UIViewController (et plus DetailViewController)
-    func makeUIViewController(context: Context) -> UIViewController {
+    func makeUIViewController(context: Context) -> DetailViewController {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
-        guard let detailVC = storyboard.instantiateViewController(withIdentifier: "DetailViewController") as? DetailViewController else {
+        guard let viewController = storyboard.instantiateViewController(withIdentifier: "DetailViewController") as? DetailViewController else {
             fatalError("Impossible d’instancier DetailViewController")
         }
 
-        detailVC.country = country
-        detailVC.title = country.name
+        viewController.country = country
+        
 
-        let navController = UINavigationController(rootViewController: detailVC)
-        return navController
+        return viewController
     }
 
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        // Rien à faire ici
+    func updateUIViewController(_ uiViewController: DetailViewController, context: Context) {
     }
 }
-

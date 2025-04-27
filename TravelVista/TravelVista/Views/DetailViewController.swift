@@ -11,52 +11,53 @@ import SwiftUI
 
 
 class DetailViewController: UIViewController, MKMapViewDelegate {
-    @IBOutlet weak var countryNameLabel: UILabel!
-    @IBOutlet weak var capitalNameLabel: UILabel!
     @IBOutlet weak var descriptionTextView: UITextView!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var mapButton: UIButton!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var embedMapView: UIView!
-    @IBOutlet weak var titleView: UIView!
-    @IBOutlet weak var rateView: UIView!
     
-    var country: Country!
+    var country: Country?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemBackground
 
-        override func viewDidLoad() {
-            super.viewDidLoad()
-            view.backgroundColor = .systemBackground
-
-            let titleView = TitleView(
-                countryName: country.name,
-                capital: country.capital,
-                rating: country.rate
-            )
-
-            let hostingController = UIHostingController(rootView: titleView)
-            addChild(hostingController)
-            view.addSubview(hostingController.view)
-            hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-
-            NSLayoutConstraint.activate([
-                hostingController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-                hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-                hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
-            ])
-
-            hostingController.didMove(toParent: self)
+        guard let country = country else {
+            fatalError("no Country received in DetailViewController")
         }
-    
-    
-    private func setUpData(country: Country) {
+        
+        setUpData(country: country)
+        
         self.title = country.name
         
-        self.countryNameLabel.text = country.name
-        self.capitalNameLabel.text = country.capital
+        let titleView = TitleView(country: country)
+        let hostingController = UIHostingController(rootView: titleView)
+        
+        addChild(hostingController)
+        view.addSubview(hostingController.view)
+        hostingController.didMove(toParent: self)
+        
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            hostingController.view.topAnchor.constraint(equalTo: imageView.bottomAnchor),
+            hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+        ])
+        
+        descriptionTextView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            descriptionTextView.topAnchor.constraint(equalTo: hostingController.view.bottomAnchor)
+        ])
+        
+        setCustomDesign()
+    }
+    
+    private func setUpData(country: Country) {
+        
         self.imageView.image = UIImage(named: country.pictureName )
         self.descriptionTextView.text = country.description
-        
-        self.setRateStars(rate: country.rate)
         self.setMapLocation(lat: self.country?.coordinates.latitude ?? 28.394857,
                             long: self.country?.coordinates.longitude ?? 84.124008)
     }
@@ -76,21 +77,6 @@ class DetailViewController: UIViewController, MKMapViewDelegate {
         let region = MKCoordinateRegion(center: initialLocation, span: span)
         self.mapView.setRegion(region, animated: true)
         self.mapView.delegate = self
-    }
-    
-    private func setRateStars(rate: Int) {
-        var lastRightAnchor = self.rateView.rightAnchor
-        for _ in 0..<rate {
-            let starView = UIImageView(image: UIImage(systemName: "star.fill"))
-            self.rateView.addSubview(starView)
-            
-            starView.translatesAutoresizingMaskIntoConstraints = false
-            starView.widthAnchor.constraint(equalToConstant: 19).isActive = true
-            starView.heightAnchor.constraint(equalToConstant: 19).isActive = true
-            starView.centerYAnchor.constraint(equalTo: self.rateView.centerYAnchor).isActive = true
-            starView.rightAnchor.constraint(equalTo: lastRightAnchor).isActive = true
-            lastRightAnchor = starView.leftAnchor
-        }
     }
     
     // Cette fonction est appelée lorsque la carte est cliquée
